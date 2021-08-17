@@ -1,57 +1,75 @@
 const express = require('express');
-const fs = require('fs'); 
-
 const PORT = 8080;
-const app = express();
-const path = 'products.txt';
+const api = express();
+api.use(express.json());
+api.use(express.urlencoded({extended: true}));
 
-var visit1 = 0;
-var visit2 = 0;
+var indice = 0;
+var mapProduct = new Map();
+const msjProductNotFound = {error: "producto no encontrado"}
+const msjProductsNotCharge = {error: "no hay productos cargados"}
+const msjError = {error: "error en la petición"}
+const msjSave = { success: "producto fue guardado"}
 
-readFile = (path) => {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, 'utf-8', (err, list) => {
-        if (err) {
-            reject(err);
-        }
-        var result = JSON.parse(list);
-        resolve(result);
+
+api.get('/api/productos/listar', (req, res) => {
+    if(indice == 0){
+        res.status(400).send(msjProductsNotCharge);
+    } else {
+        res.send(getProducts());
+    }
+});
+
+api.get('/api/productos/listar/:id', (req, res) => {
+    if(!validateId(req.params.id)){
+        res.status(400).send(msjProductNotFound);
+    } else {
+        res.send({
+            id: req.params.id,
+            product: getProductById(req.params.id)
         });
-    });
-}
+    }
+});
 
-app.listen(PORT, function() {
+api.post('/api/productos/guardar', (req, res) => {
+    if(!validateBody(req.body)){
+        res.status(400).send(msjError);
+    } else {
+        saveProduct(req.body);
+        res.send(msjSave);
+    }
+});
+
+api.listen(PORT, function() {
     console.log("My HTTP server listening on port " + PORT + "...");
 });
 
-app.get('/items', function(req, res) {
-    readFile(path).then( function (result) {
-        visit1 = visit1 + 1;
-        console.log({
-            items: result,
-            cantidad: result.length
+function saveProduct(product) {
+    mapProduct[indice] = product;
+    indice++;
+}
+
+function getProductById(key){
+    return mapProduct[key];
+}
+
+function getProducts(){
+    var listProduct = [];
+    Object.keys(mapProduct).forEach((key) => {
+        listProduct.push({
+            id: key,
+            title: mapProduct[key].title,
+            price: mapProduct[key].price,
+            thumbnail: mapProduct[key].thumbnail
         });
-    }).catch((error) => {
-        console.log("error on read file");
     });
-});
+    return listProduct;
+}
 
-app.get('/item-random', function(req, res) {
-    readFile(path).then( function (result) {
-        visit2 = visit2 + 1;
-        console.log([...result].sort(() => (Math.random() > 0.5 ? 1 : -1)).slice(0, 1));
-    }).catch((error) => {
-        console.log("error on read file");
-    });
-});
+function validateBody (product){
+    return product != null;
+}
 
-app.get('/visitas', function(req, res) {
-    readFile(path).then( function (result) {
-        console.log({ visitas: {
-            items: visit1,
-            item: visit2   
-        }});
-    }).catch((error) => {
-        console.log("error on read file");
-    });
-});
+function validateId(id){
+    return id && mapProduct[id];
+}
