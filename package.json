@@ -10,6 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "fs": "0.0.1-security"
+    "express-handlebars": "^5.3.3",
+    "express-handler": "^0.2.0",
+    "fs": "0.0.1-security",
+    "jquery": "^3.6.0",
+    "jsdom": "^17.0.0"
   }
 }

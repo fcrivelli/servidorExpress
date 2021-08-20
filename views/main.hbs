@@ -1,0 +1,24 @@
+{{> lovedChamps}}
+<br>
+{{> hatedChamps}}
+<br>
+
+<h2> List Products </h2>
+{{#if listExists}}
+     <table width="100%">
+        <tbody>
+            <tr>
+                <th>Titulo</th>
+                <th>Precio</th>
+                <th>Icono</th>
+            </tr>
+        {{#each suggestedChamps}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>{{this.price}}</td>
+                <td><img src="{{this.thumbnail}}" height="40"/></td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/if}}
