@@ -1,24 +1,39 @@
-{{> lovedChamps}}
-<br>
-{{> hatedChamps}}
-<br>
+<!DOCTYPE html>
 
-<h2> List Products </h2>
-{{#if listExists}}
-     <table width="100%">
-        <tbody>
-            <tr>
-                <th>Titulo</th>
-                <th>Precio</th>
-                <th>Icono</th>
-            </tr>
-        {{#each suggestedChamps}}
-            <tr>
-                <td>{{this.title}}</td>
-                <td>{{this.price}}</td>
-                <td><img src="{{this.thumbnail}}" height="40"/></td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-{{/if}}
+<head>
+    <title>Lista Productos</title>
+    <meta charset="utf-8"/>
+    <meta http-equlv="X-UA-Compatible" content="If-edge"/>
+    <meta name="viewport" content="width=device=width, initial-scale=1.0, viewport-fit=cover"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+</head>
+
+<body>
+     <h2> List Products </h2>
+     {{#if listExists}}
+          <table width="100%">
+             <tbody>
+                 <tr>
+                     <th>Titulo</th>
+                     <th>Precio</th>
+                     <th>Icono</th>
+                 </tr>
+             {{#each suggestedChamps}}
+                 <tr>
+                     <td>{{this.title}}</td>
+                     <td>{{this.price}}</td>
+                     <td><img src="{{this.thumbnail}}" height="40"/></td>
+                 </tr>
+             {{/each}}
+             </tbody>
+         </table>
+     {{/if}}
+
+     <form action="/productos/guardar" method="POST">        
+             <div class="form-group row">
+                 <div class="col-sm-10">
+                     <input type="submit", class="btn btn-primary btn-lg", value="Agregar Producto"/>
+                 </div>
+             </div>
+         </form>
+   </body>
