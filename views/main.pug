@@ -1,0 +1,33 @@
+html
+
+head
+    title="Lista Productos"
+    meta(charset="utf-8" )
+    meta(http-equlv="X-UA-Compatible", content="If-edge")
+    meta(name="viewport", content="width=device=width, initial-scale=1.0, viewport-fit=cover")
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin="anonymous")
+
+if listExists
+     h1= title   
+     table(width="100%", class="table")
+        tbody
+            tr
+                th(scope="col")
+                th(scope="col")="Titulo"
+                th(scope="col")="Precio"
+                th(scope="col")="Icono"
+        each product in products
+            tr
+                th(scope="row")=product.id
+                td=product.title
+                td=product.price
+                td 
+                    img(src="product.thumbnail", height="40")
+else
+    h1= title
+
+form(action="/productos/guardar", method="POST")        
+    div(class="form-group row")
+        div(class="col-sm-10")
+            input(type="submit", class="btn btn-primary btn-lg", value="Agregar Producto")
+
