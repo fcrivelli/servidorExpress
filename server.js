@@ -3,32 +3,14 @@ var mapProduct = new Map();
 const express = require('express');
 const PORT = 8080;
 const api = express();
-var jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-const { window } = new JSDOM();
-const { document } = (new JSDOM('')).window;
-global.document = document;
 
-var $ = jQuery = require('jquery')(window);
-
-const handlebars = require('express-handlebars');
 const msjProductNotFound = {error: "producto no encontrado"}
 const msjProductsNotCharge = {error: "no hay productos cargados"}
 const msjError = {error: "error en la petición"}
 const msjDelete = {success: "producto borrado"}
-const msjSave = { success: "producto fue guardado"}
+const msjSave = {success: "producto fue guardado"}
 
 var workProducts = (function() {
-    var BUTTON_SAVE_ID = '#buttonSave';
-    var TITLE_ID = '#inputTitle';
-    var PRICE_ID = '#inputPrice';
-    var THUMBNAIL_ID = '#inputThumbnail';
-
-    $(document).success(function(){
-        $(BUTTON_SAVE_ID).on('click', function(){
-            onClickButtonSave();
-        })
-    })
 
     var saveProduct = function(product) {
         mapProduct[indice] = product;
@@ -75,33 +57,7 @@ var workProducts = (function() {
         return id && mapProduct[id];
     }
 
-    var onClickButtonSave = function() {
-        if(validateForm()){
-            saveProduct({
-                title: $(TITLE_ID)[0].value,
-                price: $(PRICE_ID)[0].value,
-                thumbnail: $(THUMBNAIL_ID)[0].value
-            });
-        }
-    };
-
-    var validateForm = function() {
-        let validate = true;
-        if ($(TITLE_ID)[0].value.length == 0) {
-            validate = false;
-        }
-        if ($(PRICE_ID)[0].value.length == 0) {
-            validate = false;
-        }
-        if ($(THUMBNAIL_ID)[0].value.length == 0) {
-            validate = false;
-        }
-        if(!validate) alert("Completar todos los campos");
-        return validate;
-    }
-
     return {
-        onClickButtonSave: onClickButtonSave,
         saveProduct: saveProduct,
         getProductById: getProductById,
         getProducts: getProducts,
@@ -112,7 +68,6 @@ var workProducts = (function() {
     }
 
 })();
-
 api.engine('hbs', handlebars({
     extname: ".hbs",
     defaultLayout: 'index.hbs',
@@ -125,11 +80,18 @@ api.use(express.urlencoded({extended: true}));
 api.use(express.static('public'));
 
 api.get('/', (req, res) => {
-    res.render("./layouts/addProduct", {});
+    res.render("main", { title: indice > 0? "Lista Productos" : "No hay productos", products: workProducts.getProducts(), listExists: indice > 0 });
 })
 
-api.get('/productos/vista', (req, res) => {
-    res.render("main", { suggestedChamps: workProducts.getProducts(), listExists: true });
+api.post('/productos/guardar', (req, res) => {
+    res.render("./layouts/addProduct", { title: "Agregar Producto"});
+})
+
+api.post('/productos/vista', (req, res) => {
+    if(workProducts.validateBody(req.body)){
+       workProducts.saveProduct(req.body);
+    }
+    res.render("main", { title: indice > 0? "Lista Productos" : "No hay productos",  products: workProducts.getProducts(), listExists: indice > 0 });
 })
 
 api.get('/api/productos/listar', (req, res) => {
