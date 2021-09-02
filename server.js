@@ -69,14 +69,13 @@ var workProducts = (function() {
 
 })();
 
-api.engine('pug', require('pug').__express);
 api.set('views', './views');
-api.set('view engine','pug');
+api.set('view engine','ejs');
 api.use(express.urlencoded({extended: true}));
 api.use(express.static('public'));
 
 api.get('/', (req, res) => {
-    res.render("main.pug", { title: indice > 0? "Lista Productos" : "No hay productos", products: workProducts.getProducts(), listExists: indice > 0 });
+    res.render("main.ejs", { title: indice > 0? "Lista Productos" : "No hay productos", products: workProducts.getProducts(), listExists: indice > 0 });
 })
 
 api.post('/productos/guardar', (req, res) => {
@@ -87,7 +86,7 @@ api.post('/productos/vista', (req, res) => {
     if(workProducts.validateBody(req.body)){
        workProducts.saveProduct(req.body);
     }
-    res.render("main.pug", { title: indice > 0? "Lista Productos" : "No hay productos",  products: workProducts.getProducts(), listExists: indice > 0 });
+    res.render("main.ejs", { title: indice > 0? "Lista Productos" : "No hay productos",  products: workProducts.getProducts(), listExists: indice > 0 });
 })
 
 api.get('/api/productos/listar', (req, res) => {
